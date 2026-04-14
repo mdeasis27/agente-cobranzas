@@ -1,0 +1,18 @@
+{
+  "_comment": "Importar este archivo en N8N. Actualizar las credenciales de Google Sheets, OpenAI y WhatsApp antes de activar.",
+  "_version": "N8N 1.x",
+  "_nodes_overview": [
+    "Schedule Trigger (cron 9am diario)",
+    "Google Sheets - Customers",
+    "Google Sheets - Loans",
+    "Google Sheets - Contact_Strategy",
+    "Merge (por customer_id)",
+    "Filter (days_overdue > 0)",
+    "OpenAI Chat (genera mensaje personalizado)",
+    "Switch (whatsapp vs email)",
+    "WhatsApp node",
+    "Gmail node",
+    "Google Sheets - Activity_Log (registra actividad)"
+  ],
+  "_todo": "Construir el workflow completo en N8N y exportar el JSON real aquí"
+}
