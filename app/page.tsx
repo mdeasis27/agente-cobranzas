@@ -49,27 +49,27 @@ const STACK = [
   },
   {
     icon: "🤖",
-    name: "OpenAI GPT-4o",
+    name: "Llama 3.3 · OpenRouter",
     role: "Generación de mensajes",
-    desc: "Personaliza cada mensaje según días de mora, monto, segmento y historial del cliente.",
+    desc: "Modelo gratuito vía OpenRouter. Personaliza cada mensaje según días de mora, monto y segmento del cliente.",
     color: "bg-purple-50 border-purple-200",
     iconBg: "bg-purple-100",
   },
   {
-    icon: "💬",
-    name: "WhatsApp Business API",
-    role: "Canal principal",
-    desc: "Integración vía Truora o Twilio. Tasa de apertura >90% vs. 20% del email.",
+    icon: "✈️",
+    name: "Telegram Bot API",
+    role: "Canal de contacto",
+    desc: "Bot gratuito sin aprobaciones. Tasa de apertura >90%. El cliente solo necesita iniciar el chat una vez.",
     color: "bg-emerald-50 border-emerald-200",
     iconBg: "bg-emerald-100",
   },
   {
-    icon: "📧",
-    name: "Gmail",
-    role: "Canal alternativo",
-    desc: "Fallback cuando WhatsApp no está disponible. También registrado en el log.",
-    color: "bg-red-50 border-red-200",
-    iconBg: "bg-red-100",
+    icon: "☁️",
+    name: "Vercel Cron",
+    role: "Orquestación",
+    desc: "Trigger diario a las 9:00 am. Todo corre dentro del mismo proyecto Next.js, sin servicios externos.",
+    color: "bg-blue-50 border-blue-200",
+    iconBg: "bg-blue-100",
   },
 ];
 
@@ -115,20 +115,6 @@ const PIPELINE_NODES = [
 // Helpers
 // ──────────────────────────────────────────────
 
-function generateMessage(
-  name: string,
-  amount: string,
-  days: number
-): string {
-  if (days <= 7) {
-    return `Hola ${name}, te recordamos que tienes un pago pendiente de ${amount}. ¿Puedes realizarlo hoy? 😊`;
-  } else if (days <= 30) {
-    return `Estimado/a ${name}, tu préstamo de ${amount} tiene ${days} días de mora. Por favor realiza el pago a la brevedad para evitar cargos adicionales.`;
-  } else {
-    return `AVISO IMPORTANTE: ${name}, tu deuda de ${amount} lleva ${days} días sin pago. De no regularizar en 48h, iniciaremos acciones legales.`;
-  }
-}
-
 function segmentLabel(days: number): {
   label: string;
   color: string;
@@ -161,17 +147,31 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string>("C001");
   const [message, setMessage] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const client = DEMO_CLIENTS.find((c) => c.id === selectedId)!;
 
-  function handleGenerate() {
+  async function handleGenerate() {
     setGenerating(true);
     setMessage(null);
-    // Simula un delay de "procesamiento IA"
-    setTimeout(() => {
-      setMessage(generateMessage(client.name, client.amount, client.days));
+    setError(null);
+    try {
+      const res = await fetch("/api/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clientId: selectedId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Error al generar el mensaje.");
+      } else {
+        setMessage(data.message);
+      }
+    } catch {
+      setError("No se pudo conectar con la API. Intenta de nuevo.");
+    } finally {
       setGenerating(false);
-    }, 900);
+    }
   }
 
   const seg = segmentLabel(client.days);
@@ -184,7 +184,7 @@ export default function Home() {
           {/* Badge */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-700 bg-emerald-950/60 px-4 py-1.5 text-sm text-emerald-400">
             <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-            Powered by N8N + OpenAI GPT-4o
+            Powered by Llama 3.3 · OpenRouter · Telegram
           </div>
 
           <h1 className="mb-5 text-5xl font-bold tracking-tight text-white md:text-6xl">
@@ -202,8 +202,8 @@ export default function Home() {
             {[
               { icon: "⚡", text: "Trigger diario 9:00 am" },
               { icon: "📊", text: "Segmentación automática" },
-              { icon: "💬", text: "WhatsApp Business API" },
-              { icon: "🧠", text: "GPT-4o por cliente" },
+              { icon: "✈️", text: "Telegram Bot API" },
+              { icon: "🧠", text: "Llama 3.3 por cliente" },
             ].map((item) => (
               <div
                 key={item.text}
@@ -314,22 +314,32 @@ export default function Home() {
             {generating ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Generando con GPT-4o…
+                Generando con Llama 3.3…
               </span>
             ) : (
               "Generar mensaje ✨"
             )}
           </button>
 
-          {/* Burbuja de WhatsApp */}
+          {/* Error */}
+          {error && (
+            <div className="mt-4 rounded-lg border border-red-800 bg-red-950/40 px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
+          {/* Burbuja de Telegram */}
           {message && (
             <div className="mt-8">
-              <p className="mb-3 text-xs uppercase tracking-wide text-slate-500">
-                Preview — WhatsApp Business
-              </p>
-              {/* Header tipo WA */}
+              <div className="mb-3 flex items-center justify-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <p className="text-xs uppercase tracking-wide text-emerald-400 font-medium">
+                  Generado en vivo con Llama 3.3 — Preview Telegram
+                </p>
+              </div>
               <div className="rounded-xl overflow-hidden shadow-2xl">
-                <div className="flex items-center gap-3 bg-[#075E54] px-4 py-3">
+                {/* Header Telegram */}
+                <div className="flex items-center gap-3 bg-[#2CA5E0] px-4 py-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-lg font-bold text-white">
                     {client.name[0]}
                   </div>
@@ -337,28 +347,28 @@ export default function Home() {
                     <p className="text-sm font-semibold text-white">
                       {client.name}
                     </p>
-                    <p className="text-xs text-emerald-200">
-                      +56 9 •••• ••••
+                    <p className="text-xs text-blue-100">
+                      vía @CobranzasBot
                     </p>
                   </div>
-                  <span className="ml-auto text-xs text-emerald-200">
+                  <span className="ml-auto text-xs text-blue-100">
                     9:02 AM
                   </span>
                 </div>
                 {/* Chat background */}
-                <div className="bg-[#ECE5DD] px-4 py-6">
+                <div className="bg-[#EEF2F5] px-4 py-6">
                   {/* Burbuja enviada */}
                   <div className="ml-auto max-w-xs">
-                    <div className="rounded-tl-2xl rounded-tr-sm rounded-b-2xl bg-[#DCF8C6] px-4 py-3 shadow-sm">
+                    <div className="rounded-tl-2xl rounded-tr-sm rounded-b-2xl bg-white px-4 py-3 shadow-sm">
                       <p className="text-sm leading-relaxed text-slate-800">
                         {message}
                       </p>
                       <div className="mt-2 flex items-center justify-end gap-1">
-                        <span className="text-xs text-slate-500">9:02</span>
-                        {/* Doble tick azul */}
+                        <span className="text-xs text-slate-400">9:02</span>
+                        {/* Doble check Telegram */}
                         <svg
                           viewBox="0 0 16 11"
-                          className="h-3.5 w-3.5 text-blue-500"
+                          className="h-3.5 w-3.5 text-[#2CA5E0]"
                           fill="currentColor"
                         >
                           <path d="M11.071.653a.75.75 0 0 1 .072 1.058l-5.5 6.5a.75.75 0 0 1-1.09.041L1.47 5.168a.75.75 0 0 1 1.06-1.06l2.55 2.55L10.013.725a.75.75 0 0 1 1.058-.072z" />
@@ -369,11 +379,8 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
-              {/* Meta info */}
               <p className="mt-3 text-center text-xs text-slate-500">
-                En producción, este mensaje lo genera GPT-4o basado en datos
-                reales del cliente. Aquí está hardcodeado por segmento.
+                Datos ficticios. En producción el agente lee Google Sheets y envía a Telegram real.
               </p>
             </div>
           )}
@@ -386,7 +393,7 @@ export default function Home() {
           Stack técnico
         </h2>
         <p className="mb-10 text-center text-slate-400">
-          Cinco herramientas, cero código servidor custom. Todo corre en N8N.
+          Todo dentro del mismo proyecto Next.js. Sin servicios externos de orquestación.
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -422,33 +429,33 @@ export default function Home() {
             {[
               {
                 step: "01",
-                title: "Importar el workflow",
+                title: "Crear el bot de Telegram",
                 detail:
-                  "Importa workflows/main-workflow.json en N8N. El workflow incluye todos los nodos preconfigurados.",
+                  "Abre Telegram → busca @BotFather → /newbot → copia el token. Cada cliente debe enviarle un mensaje al bot para activar su chat_id.",
               },
               {
                 step: "02",
-                title: "Configurar credenciales en N8N",
+                title: "Crear el Google Sheet",
                 detail:
-                  "Google Sheets OAuth, OpenAI API Key, WhatsApp Business API (Truora o Twilio), Gmail.",
+                  "Usa la plantilla en sheets/template.md. Crea 4 hojas: Customers, Loans, Contact_Strategy, Activity_Log. Agrega el telegram_chat_id de cada cliente.",
               },
               {
                 step: "03",
-                title: "Crear el Google Sheet",
+                title: "Crear la Service Account en Google Cloud",
                 detail:
-                  "Usa la plantilla en sheets/template.md. Crea 4 hojas: Customers, Loans, Contact_Strategy, Activity_Log.",
+                  "Google Cloud Console → IAM → Service Accounts → Create. Descarga el JSON y comparte el sheet con el email de la cuenta.",
               },
               {
                 step: "04",
-                title: "Ajustar la estrategia de contacto",
+                title: "Obtener API Key de OpenRouter",
                 detail:
-                  "En la hoja Contact_Strategy define los rangos de días de mora y el tono de mensaje para cada segmento.",
+                  "Regístrate en openrouter.ai → API Keys → Create Key. El modelo Llama 3.3-70b es gratuito y funciona excelente en español.",
               },
               {
                 step: "05",
-                title: "Activar el trigger",
+                title: "Agregar variables en Vercel y desplegar",
                 detail:
-                  "El workflow se activa con un Schedule Trigger a las 9:00 am. Verifica en el log de N8N que corra sin errores.",
+                  "En Vercel → Settings → Environment Variables: OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN, GOOGLE_SHEET_ID, GOOGLE_SERVICE_ACCOUNT_JSON, CRON_SECRET.",
               },
             ].map((item) => (
               <div
@@ -472,10 +479,11 @@ export default function Home() {
               Variables de entorno — configuradas en N8N, no en la app
             </p>
             <pre className="overflow-x-auto text-sm text-emerald-400">
-              <code>{`OPENAI_API_KEY=sk-...
-WHATSAPP_API_KEY=   # Truora o Twilio
-GOOGLE_SHEET_ID=    # ID del Sheet de producción
-N8N_WEBHOOK_URL=    # URL del webhook de prueba`}</code>
+              <code>{`OPENROUTER_API_KEY=     # openrouter.ai → API Keys
+TELEGRAM_BOT_TOKEN=    # @BotFather en Telegram
+GOOGLE_SHEET_ID=       # ID del Sheet de producción
+GOOGLE_SERVICE_ACCOUNT_JSON=  # JSON de la Service Account
+CRON_SECRET=           # openssl rand -base64 32`}</code>
             </pre>
           </div>
         </div>
