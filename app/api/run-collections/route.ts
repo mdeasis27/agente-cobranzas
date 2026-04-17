@@ -5,7 +5,7 @@ import {
   getContactStrategy,
   appendActivityLog,
   type ContactStrategy,
-} from "@/lib/sheets";
+} from "@/lib/db/queries";
 import { generateCollectionMessage } from "@/lib/openai-agent";
 import { sendMessage } from "@/lib/telegram";
 
