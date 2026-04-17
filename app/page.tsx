@@ -32,24 +32,16 @@ const DEMO_CLIENTS = [
 
 const STACK = [
   {
-    icon: "🔄",
-    name: "N8N",
-    role: "Orquestación",
-    desc: "Workflow visual que conecta todas las piezas. Schedule trigger diario a las 9:00 am.",
-    color: "bg-orange-50 border-orange-200",
-    iconBg: "bg-orange-100",
-  },
-  {
-    icon: "📊",
-    name: "Google Sheets",
+    icon: "🗄️",
+    name: "Neon Postgres",
     role: "Core bancario simulado",
-    desc: "Clientes, préstamos, estrategia de contacto y log de actividad en hojas conectadas.",
-    color: "bg-green-50 border-green-200",
-    iconBg: "bg-green-100",
+    desc: "Clientes, préstamos, estrategia de contacto y log de actividad en tablas tipadas con Drizzle ORM.",
+    color: "bg-teal-50 border-teal-200",
+    iconBg: "bg-teal-100",
   },
   {
     icon: "🤖",
-    name: "Llama 3.3 · OpenRouter",
+    name: "GPT-OSS · OpenRouter",
     role: "Generación de mensajes",
     desc: "Modelo gratuito vía OpenRouter. Personaliza cada mensaje según días de mora, monto y segmento del cliente.",
     color: "bg-purple-50 border-purple-200",
@@ -77,7 +69,7 @@ const PIPELINE_NODES = [
   {
     icon: "📋",
     name: "Core bancario",
-    desc: "Google Sheets",
+    desc: "Neon Postgres",
     bg: "bg-blue-100",
     border: "border-blue-300",
   },
@@ -91,14 +83,14 @@ const PIPELINE_NODES = [
   {
     icon: "🤖",
     name: "Agente IA",
-    desc: "GPT-4o decide estrategia",
+    desc: "LLM decide estrategia",
     bg: "bg-purple-100",
     border: "border-purple-300",
   },
   {
     icon: "💬",
     name: "Canal",
-    desc: "WhatsApp / Email",
+    desc: "Telegram Bot",
     bg: "bg-green-100",
     border: "border-green-300",
   },
@@ -179,17 +171,17 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
       {/* ── HERO ─────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950">
+      <section className="relative overflow-hidden border-b border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
         <div className="mx-auto max-w-5xl px-6 py-20 text-center">
           {/* Badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-700 bg-emerald-950/60 px-4 py-1.5 text-sm text-emerald-400">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-            Powered by Llama 3.3 · OpenRouter · Telegram
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-700 bg-blue-950/60 px-4 py-1.5 text-sm text-blue-400">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-blue-400" />
+            Powered by GPT-OSS · OpenRouter · Telegram
           </div>
 
           <h1 className="mb-5 text-5xl font-bold tracking-tight text-white md:text-6xl">
             Agente de Cobranzas{" "}
-            <span className="text-emerald-400">con IA</span>
+            <span className="text-blue-400">con IA</span>
           </h1>
 
           <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-400">
@@ -203,7 +195,7 @@ export default function Home() {
               { icon: "⚡", text: "Trigger diario 9:00 am" },
               { icon: "📊", text: "Segmentación automática" },
               { icon: "✈️", text: "Telegram Bot API" },
-              { icon: "🧠", text: "Llama 3.3 por cliente" },
+              { icon: "🧠", text: "GPT-OSS por cliente" },
             ].map((item) => (
               <div
                 key={item.text}
@@ -223,8 +215,8 @@ export default function Home() {
           Pipeline del workflow
         </h2>
         <p className="mb-10 text-center text-slate-400">
-          Cada nodo corre en N8N. El workflow se activa a las 9:00 am y procesa
-          todos los clientes con mora activa.
+          Cada paso corre en Next.js API Routes. El cron de Vercel se activa a las 9:00 am
+          y procesa todos los clientes con mora activa.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -256,7 +248,7 @@ export default function Home() {
           </h2>
           <p className="mb-10 text-center text-slate-400">
             Selecciona un cliente y observa qué mensaje generaría el agente. La
-            lógica corre 100% en el cliente — sin APIs.
+            Mensaje generado en tiempo real por IA (OpenRouter).
           </p>
 
           {/* Selector */}
@@ -270,7 +262,7 @@ export default function Home() {
                 setSelectedId(e.target.value);
                 setMessage(null);
               }}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {DEMO_CLIENTS.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -309,12 +301,12 @@ export default function Home() {
           <button
             onClick={handleGenerate}
             disabled={generating}
-            className="w-full rounded-xl bg-emerald-600 px-6 py-3.5 text-base font-semibold text-white transition-all hover:bg-emerald-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl bg-blue-600 px-6 py-3.5 text-base font-semibold text-white transition-all hover:bg-blue-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {generating ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Generando con Llama 3.3…
+                Generando con GPT-OSS…
               </span>
             ) : (
               "Generar mensaje ✨"
@@ -332,9 +324,9 @@ export default function Home() {
           {message && (
             <div className="mt-8">
               <div className="mb-3 flex items-center justify-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <p className="text-xs uppercase tracking-wide text-emerald-400 font-medium">
-                  Generado en vivo con Llama 3.3 — Preview Telegram
+                <span className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
+                <p className="text-xs uppercase tracking-wide text-blue-400 font-medium">
+                  Generado en vivo con GPT-OSS — Preview Telegram
                 </p>
               </div>
               <div className="rounded-xl overflow-hidden shadow-2xl">
@@ -380,7 +372,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-3 text-center text-xs text-slate-500">
-                Datos ficticios. En producción el agente lee Google Sheets y envía a Telegram real.
+                Datos ficticios. En producción el agente lee Neon Postgres y envía a Telegram real.
               </p>
             </div>
           )}
@@ -422,7 +414,7 @@ export default function Home() {
             Cómo está configurado
           </h2>
           <p className="mb-10 text-center text-slate-400">
-            Reproducible en cualquier instancia de N8N en menos de 30 minutos.
+            Reproducible en cualquier proyecto Next.js en menos de 30 minutos.
           </p>
 
           <div className="space-y-4">
@@ -435,34 +427,34 @@ export default function Home() {
               },
               {
                 step: "02",
-                title: "Crear el Google Sheet",
+                title: "Conectar Neon Postgres en Vercel",
                 detail:
-                  "Usa la plantilla en sheets/template.md. Crea 4 hojas: Customers, Loans, Contact_Strategy, Activity_Log. Agrega el telegram_chat_id de cada cliente.",
+                  "Vercel Dashboard → Integrations → Neon → Connect. Inyecta DATABASE_URL automáticamente. Luego: npx drizzle-kit push && npm run db:seed.",
               },
               {
                 step: "03",
-                title: "Crear la Service Account en Google Cloud",
+                title: "Obtener API Key de OpenRouter",
                 detail:
-                  "Google Cloud Console → IAM → Service Accounts → Create. Descarga el JSON y comparte el sheet con el email de la cuenta.",
+                  "Regístrate en openrouter.ai → API Keys → Create Key. El modelo GPT-OSS-20b es gratuito y funciona excelente en español.",
               },
               {
                 step: "04",
-                title: "Obtener API Key de OpenRouter",
+                title: "Crear el bot de Telegram",
                 detail:
-                  "Regístrate en openrouter.ai → API Keys → Create Key. El modelo Llama 3.3-70b es gratuito y funciona excelente en español.",
+                  "Abre Telegram → busca @BotFather → /newbot → copia el token. Cada cliente debe enviarle un mensaje al bot para activar su chat_id.",
               },
               {
                 step: "05",
                 title: "Agregar variables en Vercel y desplegar",
                 detail:
-                  "En Vercel → Settings → Environment Variables: OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN, GOOGLE_SHEET_ID, GOOGLE_SERVICE_ACCOUNT_JSON, CRON_SECRET.",
+                  "En Vercel → Settings → Environment Variables: OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN, CRON_SECRET. DATABASE_URL ya fue inyectada por Neon.",
               },
             ].map((item) => (
               <div
                 key={item.step}
                 className="flex gap-4 rounded-xl border border-slate-800 bg-slate-800/40 p-5"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-900 text-xs font-bold text-emerald-400">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-900 text-xs font-bold text-blue-400">
                   {item.step}
                 </div>
                 <div>
@@ -476,13 +468,12 @@ export default function Home() {
           {/* Variables */}
           <div className="mt-8 rounded-xl border border-slate-700 bg-slate-900 p-5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Variables de entorno — configuradas en N8N, no en la app
+              Variables de entorno — configuradas en Vercel
             </p>
-            <pre className="overflow-x-auto text-sm text-emerald-400">
+            <pre className="overflow-x-auto text-sm text-blue-400">
               <code>{`OPENROUTER_API_KEY=     # openrouter.ai → API Keys
 TELEGRAM_BOT_TOKEN=    # @BotFather en Telegram
-GOOGLE_SHEET_ID=       # ID del Sheet de producción
-GOOGLE_SERVICE_ACCOUNT_JSON=  # JSON de la Service Account
+DATABASE_URL=          # inyectada por integración Neon en Vercel
 CRON_SECRET=           # openssl rand -base64 32`}</code>
             </pre>
           </div>
@@ -492,11 +483,11 @@ CRON_SECRET=           # openssl rand -base64 32`}</code>
       {/* ── FOOTER ───────────────────────────── */}
       <footer className="border-t border-slate-800 px-6 py-8 text-center text-sm text-slate-500">
         <p>
-          Demo interactiva — el workflow real corre en N8N Cloud · Construido
+          Demo interactiva — el workflow real corre en Next.js + Vercel Cron · Construido
           por{" "}
           <a
             href="https://manueldeasis.com"
-            className="text-emerald-400 hover:underline"
+            className="text-blue-400 hover:underline"
           >
             Manuel De Asís
           </a>

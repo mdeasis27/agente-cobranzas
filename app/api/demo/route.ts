@@ -88,13 +88,13 @@ export async function POST(req: NextRequest) {
     apiKey,
     baseURL: "https://openrouter.ai/api/v1",
     defaultHeaders: {
-      "HTTP-Referer": "https://agente-cobranzas.vercel.app",
+      "HTTP-Referer": "https://agente-cobranzas-theta.vercel.app",
       "X-Title": "Agente de Cobranzas — Demo",
     },
   });
 
   const completion = await openai.chat.completions.create({
-    model: "meta-llama/llama-3.3-70b-instruct:free",
+    model: "openai/gpt-oss-20b:free",
     max_tokens: 200,
     messages: [
       {
