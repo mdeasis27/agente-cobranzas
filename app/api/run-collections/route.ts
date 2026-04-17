@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
 
       let message: string;
       try {
-        message = await generateCollectionMessage({
+        const result = await generateCollectionMessage({
           name: customer.name,
           amount: loan.amount,
           totalDebt: loan.total_debt,
@@ -71,6 +71,7 @@ export async function GET(req: NextRequest) {
           tone: strategy.tone,
           messageTemplate: strategy.message_template,
         });
+        message = result.message;
       } catch (err) {
         results.push({
           customer_id: customer.customer_id,

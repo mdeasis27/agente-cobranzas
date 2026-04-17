@@ -1,27 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-
-// ── Rate limiting en memoria (suficiente para un portafolio) ──────────────────
-const RATE_LIMIT = 10;
-const WINDOW_MS = 60 * 60 * 1000; // 1 hora
-const ipStore = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
-  const now = Date.now();
-  const entry = ipStore.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    ipStore.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return { allowed: true, remaining: RATE_LIMIT - 1 };
-  }
-
-  if (entry.count >= RATE_LIMIT) {
-    return { allowed: false, remaining: 0 };
-  }
-
-  entry.count++;
-  return { allowed: true, remaining: RATE_LIMIT - entry.count };
-}
+import { generateCollectionMessage } from "@/lib/openai-agent";
+import { rateLimit } from "@/ai-kit/rate-limit";
+import type { UserApiKey } from "@/ai-kit/types";
 
 // ── Datos ficticios de demo ───────────────────────────────────────────────────
 const DEMO_CLIENTS = [
@@ -57,12 +37,11 @@ const STRATEGIES = [
   { min: 31, max: 999, tone: "urgente", template: "Aviso de posibles acciones legales" },
 ];
 
-// ── Handler ───────────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
 
-  const { allowed, remaining } = checkRateLimit(ip);
+  const { allowed, remaining } = rateLimit(ip, { maxRequests: 10, windowMs: 60 * 60 * 1000 });
   if (!allowed) {
     return NextResponse.json(
       { error: "Demasiadas solicitudes. Vuelve en una hora." },
@@ -76,52 +55,23 @@ export async function POST(req: NextRequest) {
     STRATEGIES.find((s) => client.days >= s.min && client.days <= s.max) ??
     STRATEGIES[0];
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "OPENROUTER_API_KEY no configurado" },
-      { status: 500 }
-    );
-  }
+  // BYOK: read from header
+  const userApiKey = parseByokHeader(req.headers.get("x-user-api-key"));
 
-  const openai = new OpenAI({
-    apiKey,
-    baseURL: "https://openrouter.ai/api/v1",
-    defaultHeaders: {
-      "HTTP-Referer": "https://agente-cobranzas-theta.vercel.app",
-      "X-Title": "Agente de Cobranzas — Demo",
-    },
-  });
-
-  let message: string;
+  let result: { message: string; provider: string; model: string; latency_ms: number };
   try {
-    const completion = await openai.chat.completions.create({
-      model: "google/gemma-3-27b-it:free",
-      max_tokens: 200,
-      messages: [
-        {
-          role: "system",
-          content: `Eres un agente de cobranzas profesional. Redacta mensajes de cobro en español,
-directos pero respetuosos, adaptados al segmento del cliente y los días de mora.
-Tono requerido: ${strategy.tone}.
-Plantilla de referencia: "${strategy.template}".
-Máximo 3 oraciones. Sin saludos largos. Termina con una acción clara. Solo texto plano, sin markdown.`,
-        },
-        {
-          role: "user",
-          content: `Cliente: ${client.name}
-Segmento: ${client.segment}
-Días de mora: ${client.days}
-Monto original: $${client.amount.toLocaleString("es-CO")}
-Deuda total: $${client.totalDebt.toLocaleString("es-CO")}
-
-Redacta el mensaje de cobro.`,
-        },
-      ],
+    result = await generateCollectionMessage({
+      name: client.name,
+      amount: client.amount,
+      totalDebt: client.totalDebt,
+      daysOverdue: client.days,
+      segment: client.segment,
+      tone: strategy.tone,
+      messageTemplate: strategy.template,
+      userApiKey: userApiKey ?? undefined,
     });
-    message = completion.choices[0].message.content?.trim() ?? "Por favor regulariza tu pago pendiente.";
   } catch (err) {
-    console.error("[/api/demo] OpenRouter error:", err);
+    console.error("[/api/demo] LLM error:", err);
     return NextResponse.json(
       { error: "El modelo de IA no está disponible en este momento. Intenta de nuevo en unos segundos." },
       { status: 503 }
@@ -129,7 +79,34 @@ Redacta el mensaje de cobro.`,
   }
 
   return NextResponse.json(
-    { message, tone: strategy.tone, remaining },
+    {
+      message: result.message,
+      tone: strategy.tone,
+      remaining,
+      provider: result.provider,
+      model: result.model,
+      latency_ms: result.latency_ms,
+    },
     { headers: { "X-RateLimit-Remaining": String(remaining) } }
   );
+}
+
+function parseByokHeader(header: string | null): UserApiKey | null {
+  if (!header) return null;
+  try {
+    const parsed = JSON.parse(header) as unknown;
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "provider" in parsed &&
+      "key" in parsed &&
+      typeof (parsed as { provider: unknown }).provider === "string" &&
+      typeof (parsed as { key: unknown }).key === "string"
+    ) {
+      return parsed as UserApiKey;
+    }
+  } catch {
+    // ignore malformed header
+  }
+  return null;
 }

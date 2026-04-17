@@ -1,23 +1,5 @@
-import OpenAI from "openai";
-
-// OpenRouter es compatible con la API de OpenAI.
-// Modelos gratuitos disponibles en: https://openrouter.ai/models?q=free
-const MODEL = "google/gemma-3-27b-it:free";
-
-let _client: OpenAI | null = null;
-function getClient() {
-  if (!_client) {
-    _client = new OpenAI({
-      apiKey: process.env.OPENROUTER_API_KEY,
-      baseURL: "https://openrouter.ai/api/v1",
-      defaultHeaders: {
-        "HTTP-Referer": "https://agente-cobranzas.vercel.app",
-        "X-Title": "Agente de Cobranzas",
-      },
-    });
-  }
-  return _client;
-}
+import type { UserApiKey } from "@/ai-kit/types";
+import { chat } from "@/ai-kit/router";
 
 export async function generateCollectionMessage(params: {
   name: string;
@@ -27,12 +9,12 @@ export async function generateCollectionMessage(params: {
   segment: string;
   tone: string;
   messageTemplate: string;
-}): Promise<string> {
-  const { name, amount, totalDebt, daysOverdue, segment, tone, messageTemplate } = params;
+  userApiKey?: UserApiKey;
+}): Promise<{ message: string; provider: string; model: string; latency_ms: number }> {
+  const { name, amount, totalDebt, daysOverdue, segment, tone, messageTemplate, userApiKey } =
+    params;
 
-  const completion = await getClient().chat.completions.create({
-    model: MODEL,
-    max_tokens: 300,
+  const response = await chat({
     messages: [
       {
         role: "system",
@@ -54,7 +36,14 @@ Deuda total con intereses: $${totalDebt.toLocaleString("es-CO")}
 Redacta el mensaje de cobro.`,
       },
     ],
+    maxTokens: 300,
+    userApiKey,
   });
 
-  return completion.choices[0].message.content?.trim() ?? "Por favor regulariza tu pago pendiente.";
+  return {
+    message: response.text.trim() || "Por favor regulariza tu pago pendiente.",
+    provider: response.provider,
+    model: response.model,
+    latency_ms: response.latency_ms,
+  };
 }
