@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   let message: string;
   try {
     const completion = await openai.chat.completions.create({
-      model: "openai/gpt-oss-20b:free",
+      model: "google/gemma-3-27b-it:free",
       max_tokens: 200,
       messages: [
         {

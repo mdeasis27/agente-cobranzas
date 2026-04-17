@@ -2,7 +2,7 @@ import OpenAI from "openai";
 
 // OpenRouter es compatible con la API de OpenAI.
 // Modelos gratuitos disponibles en: https://openrouter.ai/models?q=free
-const MODEL = "openai/gpt-oss-20b:free";
+const MODEL = "google/gemma-3-27b-it:free";
 
 let _client: OpenAI | null = null;
 function getClient() {
