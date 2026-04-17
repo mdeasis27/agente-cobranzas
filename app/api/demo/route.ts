@@ -93,34 +93,40 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const completion = await openai.chat.completions.create({
-    model: "openai/gpt-oss-20b:free",
-    max_tokens: 200,
-    messages: [
-      {
-        role: "system",
-        content: `Eres un agente de cobranzas profesional. Redacta mensajes de cobro en español,
+  let message: string;
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "openai/gpt-oss-20b:free",
+      max_tokens: 200,
+      messages: [
+        {
+          role: "system",
+          content: `Eres un agente de cobranzas profesional. Redacta mensajes de cobro en español,
 directos pero respetuosos, adaptados al segmento del cliente y los días de mora.
 Tono requerido: ${strategy.tone}.
 Plantilla de referencia: "${strategy.template}".
 Máximo 3 oraciones. Sin saludos largos. Termina con una acción clara. Solo texto plano, sin markdown.`,
-      },
-      {
-        role: "user",
-        content: `Cliente: ${client.name}
+        },
+        {
+          role: "user",
+          content: `Cliente: ${client.name}
 Segmento: ${client.segment}
 Días de mora: ${client.days}
 Monto original: $${client.amount.toLocaleString("es-CO")}
 Deuda total: $${client.totalDebt.toLocaleString("es-CO")}
 
 Redacta el mensaje de cobro.`,
-      },
-    ],
-  });
-
-  const message =
-    completion.choices[0].message.content?.trim() ??
-    "Por favor regulariza tu pago pendiente.";
+        },
+      ],
+    });
+    message = completion.choices[0].message.content?.trim() ?? "Por favor regulariza tu pago pendiente.";
+  } catch (err) {
+    console.error("[/api/demo] OpenRouter error:", err);
+    return NextResponse.json(
+      { error: "El modelo de IA no está disponible en este momento. Intenta de nuevo en unos segundos." },
+      { status: 503 }
+    );
+  }
 
   return NextResponse.json(
     { message, tone: strategy.tone, remaining },
