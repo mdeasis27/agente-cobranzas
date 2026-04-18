@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { fontVariables } from "@/design-system/fonts";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Agente de Cobranzas con IA | Demo",
-  description:
-    "Automatiza el ciclo completo de cobranzas: lee el core bancario, decide la estrategia y envía mensajes personalizados por Telegram. Powered by Llama 3.3 vía OpenRouter.",
+  title: "Agente de Cobranzas con IA",
+  description: "Automatización de cobranzas con IA — demo de portafolio",
 };
 
 export default function RootLayout({
@@ -14,13 +14,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={
-          fontVariables + " antialiased min-h-full flex flex-col bg-background text-foreground"
-        }
-      >
-        {children}
+    <html
+      lang="es"
+      className={`${fontVariables} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider defaultTheme="dark" enableSystem={false} attribute="class">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
