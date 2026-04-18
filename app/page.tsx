@@ -98,8 +98,8 @@ const PIPELINE_NODES = [
     icon: "📝",
     name: "Activity Log",
     desc: "Registra cada acción",
-    bg: "bg-gray-100",
-    border: "border-gray-300",
+    bg: "bg-muted",
+    border: "border-muted-foreground/20",
   },
 ];
 
@@ -169,28 +169,28 @@ export default function Home() {
   const seg = segmentLabel(client.days);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-background text-foreground">
       {/* ── HERO ─────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
+      <section className="border-b shadow-[var(--shadow-border-light)]">
         <div className="mx-auto max-w-5xl px-6 py-20 text-center">
           {/* Badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-700 bg-blue-950/60 px-4 py-1.5 text-sm text-blue-400">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-blue-400" />
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border shadow-[var(--shadow-border-light)] px-4 py-1.5 text-sm text-muted-foreground">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
             Powered by GPT-OSS · OpenRouter · Telegram
           </div>
 
-          <h1 className="mb-5 text-5xl font-bold tracking-tight text-white md:text-6xl">
+          <h1 className="mb-5 text-5xl font-bold tracking-tight text-foreground md:text-6xl">
             Agente de Cobranzas{" "}
-            <span className="text-blue-400">con IA</span>
+            <span className="text-primary">con IA</span>
           </h1>
 
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-400">
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
             Automatiza el ciclo completo: lee el core bancario → decide la
             estrategia → envía mensajes personalizados por WhatsApp.{" "}
-            <strong className="text-slate-200">Sin intervención humana.</strong>
+            <strong className="text-foreground">Sin intervención humana.</strong>
           </p>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4 text-sm text-slate-400">
+          <div className="mt-10 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
             {[
               { icon: "⚡", text: "Trigger diario 9:00 am" },
               { icon: "📊", text: "Segmentación automática" },
@@ -199,7 +199,7 @@ export default function Home() {
             ].map((item) => (
               <div
                 key={item.text}
-                className="flex items-center gap-1.5 rounded-full bg-slate-800/60 px-3 py-1"
+                className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1"
               >
                 <span>{item.icon}</span>
                 <span>{item.text}</span>
@@ -211,10 +211,10 @@ export default function Home() {
 
       {/* ── PIPELINE ─────────────────────────── */}
       <section className="mx-auto max-w-5xl px-6 py-16">
-        <h2 className="mb-3 text-center text-2xl font-semibold text-white">
+        <h2 className="mb-3 text-center text-2xl font-semibold text-foreground">
           Pipeline del workflow
         </h2>
-        <p className="mb-10 text-center text-slate-400">
+        <p className="mb-10 text-center text-muted-foreground">
           Cada paso corre en Next.js API Routes. El cron de Vercel se activa a las 9:00 am
           y procesa todos los clientes con mora activa.
         </p>
@@ -223,17 +223,17 @@ export default function Home() {
           {PIPELINE_NODES.map((node, i) => (
             <div key={node.name} className="flex items-center gap-2">
               <div
-                className={`flex flex-col items-center rounded-xl border-2 ${node.bg} ${node.border} px-4 py-3 text-center shadow-sm`}
+                className={`flex flex-col items-center rounded-[var(--radius-md)] border-2 ${node.bg} ${node.border} px-4 py-3 text-center shadow-[var(--shadow-card)]`}
                 style={{ minWidth: "110px" }}
               >
                 <span className="text-2xl">{node.icon}</span>
-                <span className="mt-1 text-xs font-semibold text-slate-800">
+                <span className="mt-1 text-xs font-semibold text-foreground">
                   {node.name}
                 </span>
-                <span className="mt-0.5 text-xs text-slate-600">{node.desc}</span>
+                <span className="mt-0.5 text-xs text-muted-foreground">{node.desc}</span>
               </div>
               {i < PIPELINE_NODES.length - 1 && (
-                <span className="text-xl text-slate-500 select-none">→</span>
+                <span className="text-xl text-muted-foreground select-none">→</span>
               )}
             </div>
           ))}
@@ -241,19 +241,19 @@ export default function Home() {
       </section>
 
       {/* ── DEMO INTERACTIVA ─────────────────── */}
-      <section className="border-y border-slate-800 bg-slate-900/50">
+      <section className="border-y shadow-[var(--shadow-border-light)] bg-muted/30">
         <div className="mx-auto max-w-3xl px-6 py-16">
-          <h2 className="mb-2 text-center text-2xl font-semibold text-white">
+          <h2 className="mb-2 text-center text-2xl font-semibold text-foreground">
             Simulador de mensajes
           </h2>
-          <p className="mb-10 text-center text-slate-400">
+          <p className="mb-10 text-center text-muted-foreground">
             Selecciona un cliente y observa qué mensaje generaría el agente. La
             Mensaje generado en tiempo real por IA (OpenRouter).
           </p>
 
           {/* Selector */}
           <div className="mb-6">
-            <label className="mb-2 block text-sm font-medium text-slate-300">
+            <label className="mb-2 block text-sm font-medium text-foreground">
               Cliente de ejemplo
             </label>
             <select
@@ -262,7 +262,7 @@ export default function Home() {
                 setSelectedId(e.target.value);
                 setMessage(null);
               }}
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-[var(--radius-md)] shadow-[var(--shadow-border-light)] bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             >
               {DEMO_CLIENTS.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -282,17 +282,17 @@ export default function Home() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3"
+                className="rounded-[var(--radius-md)] shadow-[var(--shadow-card)] bg-card px-4 py-3"
               >
-                <p className="text-xs text-slate-400">{item.label}</p>
-                <p className="mt-1 font-semibold text-white">{item.value}</p>
+                <p className="text-xs text-muted-foreground">{item.label}</p>
+                <p className="mt-1 font-semibold text-foreground">{item.value}</p>
               </div>
             ))}
           </div>
 
           {/* Indicador de segmento */}
           <div
-            className={`mb-6 rounded-lg border px-4 py-3 text-sm font-medium ${seg.color} ${seg.border} bg-white/5`}
+            className={`mb-6 rounded-[var(--radius-md)] border px-4 py-3 text-sm font-medium ${seg.color} ${seg.border} bg-muted/40`}
           >
             Estrategia seleccionada por IA: <strong>{seg.label}</strong>
           </div>
@@ -301,11 +301,11 @@ export default function Home() {
           <button
             onClick={handleGenerate}
             disabled={generating}
-            className="w-full rounded-xl bg-blue-600 px-6 py-3.5 text-base font-semibold text-white transition-all hover:bg-blue-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-[var(--radius-md)] bg-primary px-6 py-3.5 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {generating ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
                 Generando con GPT-OSS…
               </span>
             ) : (
@@ -315,7 +315,7 @@ export default function Home() {
 
           {/* Error */}
           {error && (
-            <div className="mt-4 rounded-lg border border-red-800 bg-red-950/40 px-4 py-3 text-sm text-red-400">
+            <div className="mt-4 rounded-[var(--radius-md)] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </div>
           )}
@@ -324,12 +324,12 @@ export default function Home() {
           {message && (
             <div className="mt-8">
               <div className="mb-3 flex items-center justify-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
-                <p className="text-xs uppercase tracking-wide text-blue-400 font-medium">
+                <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                <p className="text-xs uppercase tracking-wide text-primary font-medium">
                   Generado en vivo con GPT-OSS — Preview Telegram
                 </p>
               </div>
-              <div className="rounded-xl overflow-hidden shadow-2xl">
+              <div className="rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
                 {/* Header Telegram */}
                 <div className="flex items-center gap-3 bg-[#2CA5E0] px-4 py-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-lg font-bold text-white">
@@ -371,7 +371,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <p className="mt-3 text-center text-xs text-slate-500">
+              <p className="mt-3 text-center text-xs text-muted-foreground">
                 Datos ficticios. En producción el agente lee Neon Postgres y envía a Telegram real.
               </p>
             </div>
@@ -381,10 +381,10 @@ export default function Home() {
 
       {/* ── STACK TÉCNICO ────────────────────── */}
       <section className="mx-auto max-w-5xl px-6 py-16">
-        <h2 className="mb-2 text-center text-2xl font-semibold text-white">
+        <h2 className="mb-2 text-center text-2xl font-semibold text-foreground">
           Stack técnico
         </h2>
-        <p className="mb-10 text-center text-slate-400">
+        <p className="mb-10 text-center text-muted-foreground">
           Todo dentro del mismo proyecto Next.js. Sin servicios externos de orquestación.
         </p>
 
@@ -392,7 +392,7 @@ export default function Home() {
           {STACK.map((item) => (
             <div
               key={item.name}
-              className={`rounded-xl border p-5 ${item.color}`}
+              className={`rounded-[var(--radius-md)] border p-5 ${item.color}`}
             >
               <div
                 className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg text-xl ${item.iconBg}`}
@@ -408,12 +408,12 @@ export default function Home() {
       </section>
 
       {/* ── CONFIGURACIÓN ────────────────────── */}
-      <section className="border-t border-slate-800 bg-slate-900/40">
+      <section className="border-t shadow-[var(--shadow-border-light)] bg-muted/30">
         <div className="mx-auto max-w-3xl px-6 py-16">
-          <h2 className="mb-2 text-center text-2xl font-semibold text-white">
+          <h2 className="mb-2 text-center text-2xl font-semibold text-foreground">
             Cómo está configurado
           </h2>
-          <p className="mb-10 text-center text-slate-400">
+          <p className="mb-10 text-center text-muted-foreground">
             Reproducible en cualquier proyecto Next.js en menos de 30 minutos.
           </p>
 
@@ -452,25 +452,25 @@ export default function Home() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="flex gap-4 rounded-xl border border-slate-800 bg-slate-800/40 p-5"
+                className="flex gap-4 rounded-[var(--radius-md)] shadow-[var(--shadow-card)] bg-card p-5"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-900 text-xs font-bold text-blue-400">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                   {item.step}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">{item.title}</h3>
-                  <p className="mt-1 text-sm text-slate-400">{item.detail}</p>
+                  <h3 className="font-semibold text-foreground">{item.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Variables */}
-          <div className="mt-8 rounded-xl border border-slate-700 bg-slate-900 p-5">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <div className="mt-8 rounded-[var(--radius-md)] shadow-[var(--shadow-card)] bg-card p-5">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Variables de entorno — configuradas en Vercel
             </p>
-            <pre className="overflow-x-auto text-sm text-blue-400">
+            <pre className="overflow-x-auto text-sm text-primary">
               <code>{`OPENROUTER_API_KEY=     # openrouter.ai → API Keys
 TELEGRAM_BOT_TOKEN=    # @BotFather en Telegram
 DATABASE_URL=          # inyectada por integración Neon en Vercel
@@ -481,13 +481,13 @@ CRON_SECRET=           # openssl rand -base64 32`}</code>
       </section>
 
       {/* ── FOOTER ───────────────────────────── */}
-      <footer className="border-t border-slate-800 px-6 py-8 text-center text-sm text-slate-500">
+      <footer className="border-t shadow-[var(--shadow-border-light)] px-6 py-8 text-center text-sm text-muted-foreground">
         <p>
           Demo interactiva — el workflow real corre en Next.js + Vercel Cron · Construido
           por{" "}
           <a
             href="https://manueldeasis.com"
-            className="text-blue-400 hover:underline"
+            className="text-primary hover:underline"
           >
             Manuel De Asís
           </a>
