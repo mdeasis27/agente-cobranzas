@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Alert } from "@/design-system/components/alert";
+import type { Tone } from "@/design-system/components/tone";
 
 // ──────────────────────────────────────────────
 // Data
@@ -36,99 +38,43 @@ const STACK = [
     name: "Neon Postgres",
     role: "Core bancario simulado",
     desc: "Clientes, préstamos, estrategia de contacto y log de actividad en tablas tipadas con Drizzle ORM.",
-    color: "bg-teal-50 border-teal-200",
-    iconBg: "bg-teal-100",
   },
   {
     icon: "🤖",
     name: "GPT-OSS · OpenRouter",
     role: "Generación de mensajes",
     desc: "Modelo gratuito vía OpenRouter. Personaliza cada mensaje según días de mora, monto y segmento del cliente.",
-    color: "bg-purple-50 border-purple-200",
-    iconBg: "bg-purple-100",
   },
   {
     icon: "✈️",
     name: "Telegram Bot API",
     role: "Canal de contacto",
     desc: "Bot gratuito sin aprobaciones. Tasa de apertura >90%. El cliente solo necesita iniciar el chat una vez.",
-    color: "bg-emerald-50 border-emerald-200",
-    iconBg: "bg-emerald-100",
   },
   {
     icon: "☁️",
     name: "Vercel Cron",
     role: "Orquestación",
     desc: "Trigger diario a las 9:00 am. Todo corre dentro del mismo proyecto Next.js, sin servicios externos.",
-    color: "bg-blue-50 border-blue-200",
-    iconBg: "bg-blue-100",
   },
 ];
 
 const PIPELINE_NODES = [
-  {
-    icon: "📋",
-    name: "Core bancario",
-    desc: "Neon Postgres",
-    bg: "bg-blue-100",
-    border: "border-blue-300",
-  },
-  {
-    icon: "🔍",
-    name: "Filtro",
-    desc: "Días vencidos > 0",
-    bg: "bg-yellow-100",
-    border: "border-yellow-300",
-  },
-  {
-    icon: "🤖",
-    name: "Agente IA",
-    desc: "LLM decide estrategia",
-    bg: "bg-purple-100",
-    border: "border-purple-300",
-  },
-  {
-    icon: "💬",
-    name: "Canal",
-    desc: "Telegram Bot",
-    bg: "bg-green-100",
-    border: "border-green-300",
-  },
-  {
-    icon: "📝",
-    name: "Activity Log",
-    desc: "Registra cada acción",
-    bg: "bg-muted",
-    border: "border-muted-foreground/20",
-  },
+  { icon: "📋", name: "Core bancario", desc: "Neon Postgres" },
+  { icon: "🔍", name: "Filtro", desc: "Días vencidos > 0" },
+  { icon: "🤖", name: "Agente IA", desc: "LLM decide estrategia" },
+  { icon: "💬", name: "Canal", desc: "Telegram Bot" },
+  { icon: "📝", name: "Activity Log", desc: "Registra cada acción" },
 ];
 
 // ──────────────────────────────────────────────
 // Helpers
 // ──────────────────────────────────────────────
 
-function segmentLabel(days: number): {
-  label: string;
-  color: string;
-  border: string;
-} {
-  if (days <= 7)
-    return {
-      label: "Tono suave · 1–7 días",
-      color: "text-green-700",
-      border: "border-green-400",
-    };
-  if (days <= 30)
-    return {
-      label: "Tono firme · 8–30 días",
-      color: "text-yellow-700",
-      border: "border-yellow-400",
-    };
-  return {
-    label: "Tono urgente · 31+ días",
-    color: "text-red-700",
-    border: "border-red-400",
-  };
+function segmentLabel(days: number): { label: string; tone: Tone } {
+  if (days <= 7) return { label: "Tono suave · 1–7 días", tone: "success" };
+  if (days <= 30) return { label: "Tono firme · 8–30 días", tone: "warning" };
+  return { label: "Tono urgente · 31+ días", tone: "danger" };
 }
 
 // ──────────────────────────────────────────────
@@ -179,7 +125,7 @@ export default function Home() {
             Powered by GPT-OSS · OpenRouter · Telegram
           </div>
 
-          <h1 className="mb-5 text-5xl font-bold tracking-tight text-foreground md:text-6xl">
+          <h1 className="mb-5 text-5xl font-semibold tracking-tight text-foreground md:text-6xl">
             Agente de Cobranzas{" "}
             <span className="text-primary">con IA</span>
           </h1>
@@ -223,7 +169,7 @@ export default function Home() {
           {PIPELINE_NODES.map((node, i) => (
             <div key={node.name} className="flex items-center gap-2">
               <div
-                className={`flex flex-col items-center rounded-[var(--radius-md)] border-2 ${node.bg} ${node.border} px-4 py-3 text-center shadow-[var(--shadow-card)]`}
+                className="flex flex-col items-center rounded-[var(--radius-md)] bg-card px-4 py-3 text-center shadow-[var(--shadow-card)]"
                 style={{ minWidth: "110px" }}
               >
                 <span className="text-2xl">{node.icon}</span>
@@ -291,11 +237,9 @@ export default function Home() {
           </div>
 
           {/* Indicador de segmento */}
-          <div
-            className={`mb-6 rounded-[var(--radius-md)] border px-4 py-3 text-sm font-medium ${seg.color} ${seg.border} bg-muted/40`}
-          >
+          <Alert tone={seg.tone} className="mb-6 px-4 py-3 text-sm font-medium">
             Estrategia seleccionada por IA: <strong>{seg.label}</strong>
-          </div>
+          </Alert>
 
           {/* Botón */}
           <button
@@ -315,9 +259,9 @@ export default function Home() {
 
           {/* Error */}
           {error && (
-            <div className="mt-4 rounded-[var(--radius-md)] border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <Alert tone="danger" className="mt-4">
               {error}
-            </div>
+            </Alert>
           )}
 
           {/* Burbuja de Telegram */}
@@ -331,36 +275,36 @@ export default function Home() {
               </div>
               <div className="rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
                 {/* Header Telegram */}
-                <div className="flex items-center gap-3 bg-[#2CA5E0] px-4 py-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-lg font-bold text-white">
+                <div className="flex items-center gap-3 bg-accent px-4 py-3 text-white">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-lg font-semibold">
                     {client.name[0]}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">
+                    <p className="text-sm font-semibold">
                       {client.name}
                     </p>
-                    <p className="text-xs text-blue-100">
+                    <p className="text-xs text-white/70">
                       vía @CobranzasBot
                     </p>
                   </div>
-                  <span className="ml-auto text-xs text-blue-100">
+                  <span className="ml-auto text-xs text-white/70">
                     9:02 AM
                   </span>
                 </div>
                 {/* Chat background */}
-                <div className="bg-[#EEF2F5] px-4 py-6">
+                <div className="bg-muted/40 px-4 py-6">
                   {/* Burbuja enviada */}
                   <div className="ml-auto max-w-xs">
-                    <div className="rounded-tl-2xl rounded-tr-sm rounded-b-2xl bg-white px-4 py-3 shadow-sm">
-                      <p className="text-sm leading-relaxed text-slate-800">
+                    <div className="rounded-tl-2xl rounded-tr-sm rounded-b-2xl bg-card px-4 py-3 shadow-[var(--shadow-border-light)]">
+                      <p className="text-sm leading-relaxed text-foreground">
                         {message}
                       </p>
                       <div className="mt-2 flex items-center justify-end gap-1">
-                        <span className="text-xs text-slate-400">9:02</span>
+                        <span className="text-xs text-muted-foreground">9:02</span>
                         {/* Doble check Telegram */}
                         <svg
                           viewBox="0 0 16 11"
-                          className="h-3.5 w-3.5 text-[#2CA5E0]"
+                          className="h-3.5 w-3.5 text-accent"
                           fill="currentColor"
                         >
                           <path d="M11.071.653a.75.75 0 0 1 .072 1.058l-5.5 6.5a.75.75 0 0 1-1.09.041L1.47 5.168a.75.75 0 0 1 1.06-1.06l2.55 2.55L10.013.725a.75.75 0 0 1 1.058-.072z" />
@@ -392,16 +336,14 @@ export default function Home() {
           {STACK.map((item) => (
             <div
               key={item.name}
-              className={`rounded-[var(--radius-md)] border p-5 ${item.color}`}
+              className="rounded-[var(--radius-md)] bg-card p-5 shadow-[var(--shadow-card)]"
             >
-              <div
-                className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg text-xl ${item.iconBg}`}
-              >
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-xl">
                 {item.icon}
               </div>
-              <h3 className="font-semibold text-slate-800">{item.name}</h3>
-              <p className="text-xs font-medium text-slate-500">{item.role}</p>
-              <p className="mt-2 text-sm text-slate-600">{item.desc}</p>
+              <h3 className="font-semibold text-foreground">{item.name}</h3>
+              <p className="text-xs font-medium text-muted-foreground">{item.role}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -454,7 +396,7 @@ export default function Home() {
                 key={item.step}
                 className="flex gap-4 rounded-[var(--radius-md)] shadow-[var(--shadow-card)] bg-card p-5"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                   {item.step}
                 </div>
                 <div>

@@ -16,3 +16,7 @@ Thumbs.db
 
 # Debug
 npm-debug.log*
+
+# infisical local config (never committed)
+.infisical.json
+*.tsbuildinfo
