@@ -4,10 +4,10 @@ import {
   getLoans,
   getContactStrategy,
   appendActivityLog,
-  type ContactStrategy,
 } from "@/lib/db/queries";
 import { generateCollectionMessage } from "@/lib/openai-agent";
 import { sendMessage } from "@/lib/telegram";
+import { findStrategy } from "@/lib/experience/contact-policy";
 
 // Vercel Cron agrega este header automáticamente.
 // Para pruebas manuales, envía: Authorization: Bearer <CRON_SECRET>
@@ -16,17 +16,6 @@ function isAuthorized(req: NextRequest): boolean {
   if (!secret) return false;
   const auth = req.headers.get("authorization");
   return auth === `Bearer ${secret}`;
-}
-
-function findStrategy(
-  daysOverdue: number,
-  strategies: ContactStrategy[]
-): ContactStrategy | null {
-  return (
-    strategies.find(
-      (s) => daysOverdue >= s.days_overdue_min && daysOverdue <= s.days_overdue_max
-    ) ?? null
-  );
 }
 
 export async function GET(req: NextRequest) {

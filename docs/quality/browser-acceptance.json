@@ -1,0 +1,50 @@
+{
+  "repository": "agente-cobranzas",
+  "checks": [
+    {
+      "locale": "en",
+      "htmlLang": "en",
+      "buttons": [
+        "Route account",
+        "Cancel",
+        "Reset",
+        "Play",
+        "Show all"
+      ],
+      "inputs": 5,
+      "clicked": "Route account",
+      "traceEvents": 2,
+      "keyboardFocus": "SELECT",
+      "editingInvalidatesEvidence": true,
+      "resetClearsResult": true,
+      "cancelUsable": true,
+      "languageSwitchWithoutStorage": true
+    },
+    {
+      "locale": "es",
+      "htmlLang": "es",
+      "buttons": [
+        "Enrutar cuenta",
+        "Cancelar",
+        "Restaurar",
+        "Reproducir",
+        "Ver todo"
+      ],
+      "inputs": 5,
+      "clicked": "Enrutar cuenta",
+      "traceEvents": 2,
+      "keyboardFocus": "SELECT",
+      "editingInvalidatesEvidence": true,
+      "resetClearsResult": true,
+      "cancelUsable": true,
+      "languageSwitchWithoutStorage": true
+    }
+  ],
+  "errors": [],
+  "legacyRedirectRetainsQuery": true,
+  "unsupportedLocale404": true,
+  "translatedBodyDiffers": true,
+  "reducedMotionDisablesPlayback": true,
+  "mobileNoOverflow": true,
+  "noExternalOrApiRequests": true
+}

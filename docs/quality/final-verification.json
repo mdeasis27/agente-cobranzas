@@ -1,0 +1,27 @@
+{
+  "repository": "agente-cobranzas",
+  "verifiedAt": "2026-10-01T11:49:32.2660199-06:00",
+  "commands": {
+    "test": {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "testCount": 3,
+      "log": "docs/quality/final-test.log"
+    },
+    "lint": {
+      "command": "pnpm run lint",
+      "exitCode": 0,
+      "log": "docs/quality/final-lint.log"
+    },
+    "types": {
+      "command": "pnpm exec tsc --noEmit",
+      "exitCode": 0,
+      "log": "docs/quality/final-types.log"
+    },
+    "build": {
+      "command": "pnpm run build",
+      "exitCode": 0,
+      "log": "docs/quality/final-build.log"
+    }
+  }
+}

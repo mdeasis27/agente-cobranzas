@@ -5,8 +5,8 @@ import { cn } from "@/design-system/utils";
 
 const STACK = [
   "Next.js 16",
-  "OpenAI",
-  "Neon Postgres",
+  "LLM API",
+  "PostgreSQL",
   "Drizzle ORM",
   "TypeScript",
   "Tailwind v4",

@@ -35,35 +35,35 @@ const DEMO_CLIENTS = [
 const STACK = [
   {
     icon: "🗄️",
-    name: "Neon Postgres",
+    name: "PostgreSQL",
     role: "Core bancario simulado",
     desc: "Clientes, préstamos, estrategia de contacto y log de actividad en tablas tipadas con Drizzle ORM.",
   },
   {
     icon: "🤖",
-    name: "GPT-OSS · OpenRouter",
+    name: "GPT-OSS · LLM API",
     role: "Generación de mensajes",
-    desc: "Modelo gratuito vía OpenRouter. Personaliza cada mensaje según días de mora, monto y segmento del cliente.",
+    desc: "Modelo gratuito vía LLM API. Personaliza cada mensaje según días de mora, monto y segmento del cliente.",
   },
   {
     icon: "✈️",
-    name: "Telegram Bot API",
+    name: "Messaging Bot API",
     role: "Canal de contacto",
     desc: "Bot gratuito sin aprobaciones. Tasa de apertura >90%. El cliente solo necesita iniciar el chat una vez.",
   },
   {
     icon: "☁️",
-    name: "Vercel Cron",
+    name: "Scheduled jobs",
     role: "Orquestación",
     desc: "Trigger diario a las 9:00 am. Todo corre dentro del mismo proyecto Next.js, sin servicios externos.",
   },
 ];
 
 const PIPELINE_NODES = [
-  { icon: "📋", name: "Core bancario", desc: "Neon Postgres" },
+  { icon: "📋", name: "Core bancario", desc: "PostgreSQL" },
   { icon: "🔍", name: "Filtro", desc: "Días vencidos > 0" },
   { icon: "🤖", name: "Agente IA", desc: "LLM decide estrategia" },
-  { icon: "💬", name: "Canal", desc: "Telegram Bot" },
+  { icon: "💬", name: "Canal", desc: "Messaging bot" },
   { icon: "📝", name: "Activity Log", desc: "Registra cada acción" },
 ];
 
@@ -122,7 +122,7 @@ export default function Home() {
           {/* Badge */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border shadow-[var(--shadow-border-light)] px-4 py-1.5 text-sm text-muted-foreground">
             <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-            Powered by GPT-OSS · OpenRouter · Telegram
+            Powered by GPT-OSS · LLM API · mensajería
           </div>
 
           <h1 className="mb-5 text-5xl font-semibold tracking-tight text-foreground md:text-6xl">
@@ -140,7 +140,7 @@ export default function Home() {
             {[
               { icon: "⚡", text: "Trigger diario 9:00 am" },
               { icon: "📊", text: "Segmentación automática" },
-              { icon: "✈️", text: "Telegram Bot API" },
+              { icon: "✈️", text: "Messaging Bot API" },
               { icon: "🧠", text: "GPT-OSS por cliente" },
             ].map((item) => (
               <div
@@ -161,7 +161,7 @@ export default function Home() {
           Pipeline del workflow
         </h2>
         <p className="mb-10 text-center text-muted-foreground">
-          Cada paso corre en Next.js API Routes. El cron de Vercel se activa a las 9:00 am
+          Cada paso corre en Next.js API Routes. El cron de plataforma de despliegue se activa a las 9:00 am
           y procesa todos los clientes con mora activa.
         </p>
 
@@ -194,7 +194,7 @@ export default function Home() {
           </h2>
           <p className="mb-10 text-center text-muted-foreground">
             Selecciona un cliente y observa qué mensaje generaría el agente. La
-            Mensaje generado en tiempo real por IA (OpenRouter).
+            Mensaje generado en tiempo real por IA (LLM API).
           </p>
 
           {/* Selector */}
@@ -264,17 +264,17 @@ export default function Home() {
             </Alert>
           )}
 
-          {/* Burbuja de Telegram */}
+          {/* Burbuja de mensajería */}
           {message && (
             <div className="mt-8">
               <div className="mb-3 flex items-center justify-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 <p className="text-xs uppercase tracking-wide text-primary font-medium">
-                  Generado en vivo con GPT-OSS — Preview Telegram
+                  Generado en vivo con GPT-OSS — Preview mensajería
                 </p>
               </div>
               <div className="rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
-                {/* Header Telegram */}
+                {/* Header mensajería */}
                 <div className="flex items-center gap-3 bg-accent px-4 py-3 text-white">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-lg font-semibold">
                     {client.name[0]}
@@ -301,7 +301,7 @@ export default function Home() {
                       </p>
                       <div className="mt-2 flex items-center justify-end gap-1">
                         <span className="text-xs text-muted-foreground">9:02</span>
-                        {/* Doble check Telegram */}
+                        {/* Doble check mensajería */}
                         <svg
                           viewBox="0 0 16 11"
                           className="h-3.5 w-3.5 text-accent"
@@ -316,7 +316,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-3 text-center text-xs text-muted-foreground">
-                Datos ficticios. En producción el agente lee Neon Postgres y envía a Telegram real.
+                Datos ficticios. En producción el agente lee PostgreSQL y envía a mensajería real.
               </p>
             </div>
           )}
@@ -363,33 +363,33 @@ export default function Home() {
             {[
               {
                 step: "01",
-                title: "Crear el bot de Telegram",
+                title: "Crear el bot de mensajería",
                 detail:
-                  "Abre Telegram → busca @BotFather → /newbot → copia el token. Cada cliente debe enviarle un mensaje al bot para activar su chat_id.",
+                  "Abre mensajería → busca @BotFather → /newbot → copia el token. Cada cliente debe enviarle un mensaje al bot para activar su chat_id.",
               },
               {
                 step: "02",
-                title: "Conectar Neon Postgres en Vercel",
+                title: "Conectar PostgreSQL en plataforma de despliegue",
                 detail:
-                  "Vercel Dashboard → Integrations → Neon → Connect. Inyecta DATABASE_URL automáticamente. Luego: npx drizzle-kit push && npm run db:seed.",
+                  "plataforma de despliegue Dashboard → Integrations → PostgreSQL → Connect. Inyecta DATABASE_URL automáticamente. Luego: npx drizzle-kit push && npm run db:seed.",
               },
               {
                 step: "03",
-                title: "Obtener API Key de OpenRouter",
+                title: "Obtener API Key de LLM API",
                 detail:
-                  "Regístrate en openrouter.ai → API Keys → Create Key. El modelo GPT-OSS-20b es gratuito y funciona excelente en español.",
+      "Configura una clave compatible con la integración LLM del proyecto. La demo usa un modelo de lenguaje para personalizar los mensajes en español.",
               },
               {
                 step: "04",
-                title: "Crear el bot de Telegram",
+                title: "Crear el bot de mensajería",
                 detail:
-                  "Abre Telegram → busca @BotFather → /newbot → copia el token. Cada cliente debe enviarle un mensaje al bot para activar su chat_id.",
+                  "Abre mensajería → busca @BotFather → /newbot → copia el token. Cada cliente debe enviarle un mensaje al bot para activar su chat_id.",
               },
               {
                 step: "05",
-                title: "Agregar variables en Vercel y desplegar",
+                title: "Agregar variables en plataforma de despliegue y desplegar",
                 detail:
-                  "En Vercel → Settings → Environment Variables: OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN, CRON_SECRET. DATABASE_URL ya fue inyectada por Neon.",
+                  "En plataforma de despliegue → Settings → Environment Variables: OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN, CRON_SECRET. DATABASE_URL ya fue inyectada por PostgreSQL.",
               },
             ].map((item) => (
               <div
@@ -410,12 +410,12 @@ export default function Home() {
           {/* Variables */}
           <div className="mt-8 rounded-[var(--radius-md)] shadow-[var(--shadow-card)] bg-card p-5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Variables de entorno — configuradas en Vercel
+              Variables de entorno — configuradas en plataforma de despliegue
             </p>
             <pre className="overflow-x-auto text-sm text-primary">
               <code>{`OPENROUTER_API_KEY=     # openrouter.ai → API Keys
-TELEGRAM_BOT_TOKEN=    # @BotFather en Telegram
-DATABASE_URL=          # inyectada por integración Neon en Vercel
+TELEGRAM_BOT_TOKEN=    # @BotFather en mensajería
+DATABASE_URL=          # inyectada por integración PostgreSQL en plataforma de despliegue
 CRON_SECRET=           # openssl rand -base64 32`}</code>
             </pre>
           </div>
@@ -425,7 +425,7 @@ CRON_SECRET=           # openssl rand -base64 32`}</code>
       {/* ── FOOTER ───────────────────────────── */}
       <footer className="border-t shadow-[var(--shadow-border-light)] px-6 py-8 text-center text-sm text-muted-foreground">
         <p>
-          Demo interactiva — el workflow real corre en Next.js + Vercel Cron · Construido
+          Demo interactiva — el workflow real corre en Next.js + Scheduled jobs · Construido
           por{" "}
           <a
             href="https://manueldeasis.com"
