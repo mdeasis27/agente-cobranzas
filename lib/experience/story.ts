@@ -1,7 +1,5 @@
 import type { Heading } from "@/design-system/demo/project-story";
 
-type NodeCopy = { name: string; sub: string; analogy: string };
-
 export interface CobranzasStory {
   name: string;
   oneLiner: string;
@@ -13,7 +11,7 @@ export interface CobranzasStory {
   fit: { heading: Heading; worthLabel: string; worth: string; notLabel: string; not: string };
   proves: { heading: Heading; text: string };
   engineers: { summary: string; points: string[]; repoLabel: string };
-  scene: { title: string; caption: string; statusLabels: { active: string; success: string; danger: string }; tapeLabel: string; nodes: { accounts: NodeCopy; rule: NodeCopy; call: NodeCopy; queue: NodeCopy }; tape: { served: string; rerouted: string; lost: string }; atRiskOf: (n: number) => string };
+  scene: { title: string; caption: string; callLane: string; reminderLane: string; atRiskZone: string; bigBalance: string; toneLine: (days: number) => string; progress: (shown: number, calls: number) => string; arriving: string; atRiskOf: (n: number) => string };
 }
 
 export const STORY: Record<"en" | "es", CobranzasStory> = {
@@ -45,7 +43,7 @@ export const STORY: Record<"en" | "es", CobranzasStory> = {
       daysLabel: "Call from",
       daysValue: (d) => `${d} days late`,
       daysHint: "Lower means more calls for the team to make.",
-      note: "Each square is one account, from the least to the most overdue. Green gets a call. Red is an account at risk that only got a reminder.",
+      note: "Each card is one account, placed on a ruler by its days late. Cards past the dashed line, or with a large balance, get a call. A red card with an × is an account at risk that only got a reminder.",
       simulate: "Run it",
       cancel: "Cancel",
       reset: "Start over",
@@ -87,16 +85,14 @@ export const STORY: Record<"en" | "es", CobranzasStory> = {
     },
     scene: {
       title: "Who got a call",
-      caption: "Watch the accounts arrive three at a time, from the least to the most overdue.",
-      statusLabels: { active: "tuned by you", success: "calls made", danger: "an account at risk got only a reminder" },
-      tapeLabel: "Twelve accounts, from the least to the most overdue",
-      nodes: {
-        accounts: { name: "Accounts", sub: "12 overdue", analogy: "the late cards" },
-        rule: { name: "Day rule", sub: "days late", analogy: "when the tone changes" },
-        call: { name: "Call", sub: "priority outreach", analogy: "a person calls" },
-        queue: { name: "Reminder", sub: "standard queue", analogy: "the friendly notice" },
-      },
-      tape: { served: "gets a call", rerouted: "friendly reminder", lost: "at risk, reminder only" },
+      caption: "Watch the accounts arrive three at a time and land on the ruler. Above the line, a call. Below, a reminder.",
+      callLane: "A person calls you",
+      reminderLane: "Friendly reminder by email",
+      atRiskZone: "at risk",
+      bigBalance: "large balance",
+      toneLine: (d) => `tone changes: day ${d}`,
+      progress: (shown, calls) => `${shown} of 12 accounts, ${calls} ${calls === 1 ? "call" : "calls"}, ${shown - calls} ${shown - calls === 1 ? "reminder" : "reminders"}`,
+      arriving: "The cards arrive by days late",
       atRiskOf: (n) => (n === 0 ? "Every account at risk gets a call" : n === 1 ? "1 account at risk got only a reminder" : `${n} accounts at risk got only a reminder`),
     },
   },
@@ -128,7 +124,7 @@ export const STORY: Record<"en" | "es", CobranzasStory> = {
       daysLabel: "Llamar desde",
       daysValue: (d) => `${d} días de atraso`,
       daysHint: "Más bajo significa más llamadas para el equipo.",
-      note: "Cada cuadrito es una cuenta, de la menos a la más atrasada. Las verdes reciben llamada. Una roja es una cuenta en riesgo que solo recibió un recordatorio.",
+      note: "Cada tarjeta es una cuenta, acomodada en una regla según sus días de atraso. Las que pasan la línea punteada, o deben mucho, reciben una llamada. Una tarjeta roja con una × es una cuenta en riesgo que solo recibió un recordatorio.",
       simulate: "Correr",
       cancel: "Cancelar",
       reset: "Empezar de nuevo",
@@ -170,16 +166,14 @@ export const STORY: Record<"en" | "es", CobranzasStory> = {
     },
     scene: {
       title: "A quién se le llamó",
-      caption: "Mira cómo llegan las cuentas de tres en tres, de la menos a la más atrasada.",
-      statusLabels: { active: "ajustado por ti", success: "llamadas hechas", danger: "una cuenta en riesgo solo recibió recordatorio" },
-      tapeLabel: "Doce cuentas, de la menos a la más atrasada",
-      nodes: {
-        accounts: { name: "Cuentas", sub: "12 atrasadas", analogy: "las tarjetas tarde" },
-        rule: { name: "Regla de días", sub: "días de atraso", analogy: "cuando cambia el tono" },
-        call: { name: "Llamada", sub: "contacto prioritario", analogy: "te llama una persona" },
-        queue: { name: "Recordatorio", sub: "fila normal", analogy: "el aviso amable" },
-      },
-      tape: { served: "recibe llamada", rerouted: "recordatorio amable", lost: "en riesgo, solo recordatorio" },
+      caption: "Mira cómo llegan las cuentas de tres en tres y se acomodan en la regla. Arriba, una llamada. Abajo, un aviso.",
+      callLane: "Te llama una persona",
+      reminderLane: "Aviso amable por correo",
+      atRiskZone: "en riesgo",
+      bigBalance: "saldo grande",
+      toneLine: (d) => `cambia el tono: día ${d}`,
+      progress: (shown, calls) => `${shown} de 12 cuentas, ${calls} ${calls === 1 ? "llamada" : "llamadas"}, ${shown - calls} ${shown - calls === 1 ? "aviso" : "avisos"}`,
+      arriving: "Las tarjetas llegan por días de atraso",
       atRiskOf: (n) => (n === 0 ? "Todas las cuentas en riesgo reciben llamada" : n === 1 ? "1 cuenta en riesgo solo recibió recordatorio" : `${n} cuentas en riesgo solo recibieron recordatorio`),
     },
   },

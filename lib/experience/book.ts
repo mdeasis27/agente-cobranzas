@@ -15,14 +15,14 @@ export const ACCOUNTS: Account[] = Array.from({ length: 12 }, (_, i) => ({
   segment: i === 4 || i === 7 ? "sensitive" : "standard",
 }));
 
-export type BookResult = { items: { id: string; daysPastDue: number; status: BookStatus }[]; counts: Record<BookStatus, number> };
+export type BookResult = { items: { id: string; daysPastDue: number; amountCents: number; status: BookStatus }[]; counts: Record<BookStatus, number> };
 
 /** Runs every account through decideContact with one day threshold. */
 export function runBook(thresholdDays: number): BookResult {
   const items = ACCOUNTS.map(({ id, ...a }) => {
     const high = decideContact({ ...a, policy: "balanced", thresholdDays }).priority === "high";
     const status: BookStatus = high ? "prioritized" : a.daysPastDue >= AT_RISK_DAYS ? "atRisk" : "reminder";
-    return { id, daysPastDue: a.daysPastDue, status };
+    return { id, daysPastDue: a.daysPastDue, amountCents: a.amountCents, status };
   });
   const counts: Record<BookStatus, number> = { prioritized: 0, reminder: 0, atRisk: 0 };
   for (const i of items) counts[i.status]++;
