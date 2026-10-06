@@ -37,7 +37,7 @@ test("at-risk count agrees in number", () => {
 });
 
 test("scene progress line agrees in number", () => {
-  assert.equal(STORY.es.scene.progress(12, 3), "12 de 12 cuentas, 3 llamadas, 9 avisos");
-  assert.equal(STORY.en.scene.progress(3, 1), "3 of 12 accounts, 1 call, 2 reminders");
+  assert.equal(STORY.es.scene.progress(12, 12, 3), "12 de 12 cuentas, 3 llamadas, 9 avisos");
+  assert.equal(STORY.en.scene.progress(3, 7, 1), "3 of 7 accounts, 1 call, 2 reminders");
   assert.equal(STORY.es.scene.toneLine(50), "cambia el tono: día 50");
 });

@@ -11,7 +11,7 @@ export interface CobranzasStory {
   fit: { heading: Heading; worthLabel: string; worth: string; notLabel: string; not: string };
   proves: { heading: Heading; text: string };
   engineers: { summary: string; points: string[]; repoLabel: string };
-  scene: { title: string; caption: string; callLane: string; reminderLane: string; atRiskZone: string; bigBalance: string; toneLine: (days: number) => string; progress: (shown: number, calls: number) => string; arriving: string; atRiskOf: (n: number) => string };
+  scene: { title: string; caption: string; callLane: string; reminderLane: string; atRiskZone: string; bigBalance: string; toneLine: (days: number) => string; progress: (shown: number, total: number, calls: number) => string; arriving: string; atRiskOf: (n: number) => string };
 }
 
 export const STORY: Record<"en" | "es", CobranzasStory> = {
@@ -91,7 +91,7 @@ export const STORY: Record<"en" | "es", CobranzasStory> = {
       atRiskZone: "at risk",
       bigBalance: "large balance",
       toneLine: (d) => `tone changes: day ${d}`,
-      progress: (shown, calls) => `${shown} of 12 accounts, ${calls} ${calls === 1 ? "call" : "calls"}, ${shown - calls} ${shown - calls === 1 ? "reminder" : "reminders"}`,
+      progress: (shown, total, calls) => `${shown} of ${total} accounts, ${calls} ${calls === 1 ? "call" : "calls"}, ${shown - calls} ${shown - calls === 1 ? "reminder" : "reminders"}`,
       arriving: "The cards arrive by days late",
       atRiskOf: (n) => (n === 0 ? "Every account at risk gets a call" : n === 1 ? "1 account at risk got only a reminder" : `${n} accounts at risk got only a reminder`),
     },
@@ -172,7 +172,7 @@ export const STORY: Record<"en" | "es", CobranzasStory> = {
       atRiskZone: "en riesgo",
       bigBalance: "saldo grande",
       toneLine: (d) => `cambia el tono: día ${d}`,
-      progress: (shown, calls) => `${shown} de 12 cuentas, ${calls} ${calls === 1 ? "llamada" : "llamadas"}, ${shown - calls} ${shown - calls === 1 ? "aviso" : "avisos"}`,
+      progress: (shown, total, calls) => `${shown} de ${total} cuentas, ${calls} ${calls === 1 ? "llamada" : "llamadas"}, ${shown - calls} ${shown - calls === 1 ? "aviso" : "avisos"}`,
       arriving: "Las tarjetas llegan por días de atraso",
       atRiskOf: (n) => (n === 0 ? "Todas las cuentas en riesgo reciben llamada" : n === 1 ? "1 cuenta en riesgo solo recibió recordatorio" : `${n} cuentas en riesgo solo recibieron recordatorio`),
     },

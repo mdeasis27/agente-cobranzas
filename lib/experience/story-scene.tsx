@@ -34,7 +34,7 @@ export function CobranzasStoryScene({ frame, result, thresholdDays, locale }: { 
   const counts = revealedCounts(result.items, revealed);
   const done = revealed === n;
   const headline = !done && counts.atRisk === 0 ? copy.arriving : copy.atRiskOf(counts.atRisk);
-  const progress = copy.progress(revealed, counts.prioritized);
+  const progress = copy.progress(revealed, n, counts.prioritized);
   const lineX = x(toneLineDay(thresholdDays));
   const toneLeft = lineX > W / 2;
   // Cards slide in, then the outcome lands; reduced motion shows the final state at once.
