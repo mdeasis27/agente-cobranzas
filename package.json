@@ -7,12 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "tsx --test lib/experience/adapter.test.ts",
+    "test": "tsx --test lib/experience/*.test.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx scripts/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "brand:sync": "node ../portafolio-mdea/scripts/brand-sync.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
