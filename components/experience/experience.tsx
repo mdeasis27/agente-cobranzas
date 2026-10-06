@@ -1,5 +1,89 @@
 "use client";
-import {BusinessBrief} from "./business-brief";
-import { useEffect,useState } from "react"; import { ScenarioPicker,StoryStage,OutcomeBlock } from "@/design-system/demo/decision-lab"; import { useDemoRun } from "@/design-system/demo/use-demo-run"; import { TracePlayer } from "@/design-system/demo/trace-player"; import { runExperience,type ExperienceInput } from "@/lib/experience/adapter"; import { copy as en } from "@/lib/experience/copy.en"; import { copy as es } from "@/lib/experience/copy.es"; import { collectionScenarios } from "@/lib/experience/story"; import { Visualization } from "./visualization";
-function errorCopy(error:string,es:boolean){return es&&error.startsWith("Amount must")?"El importe y los días deben ser números enteros no negativos.":error;}
-export function Experience({lang}:{lang:"en"|"es"}){const spanish=lang==="es",c=spanish?es:en,[input,setInput]=useState<ExperienceInput>(collectionScenarios.standard),[selected,setSelected]=useState<"standard"|"priority"|"custom">("standard"),demo=useDemoRun(runExperience);useEffect(()=>{demo.cancel();},[input.daysPastDue,input.amountCents,input.segment,input.policy]);const change=(next:ExperienceInput)=>{setInput(next);setSelected("custom");demo.reset();};const reset=()=>{setInput(collectionScenarios.standard);setSelected("standard");demo.reset();};return <main className="mx-auto max-w-6xl px-5 py-12"><div className="flex justify-between"><a href={`/${lang}`}>← {spanish?"Portafolio":"Portfolio"}</a><a className="rounded border px-3 py-1" href={`/${spanish?"en":"es"}/app`}>{spanish?"EN":"ES"}</a></div><p className="mt-2 text-xs text-muted-foreground">{spanish?"Cambiar idioma reinicia el escenario.":"Changing language resets the scenario."}</p><h1 className="mt-8 text-4xl font-bold">{c.title}</h1><BusinessBrief lang={lang}/><p className="mt-3 text-muted-foreground">{c.briefing}</p><div className="mt-10 grid gap-6 lg:grid-cols-[320px_1fr]"><section className="rounded-2xl border p-5"><ScenarioPicker locale={lang} selected={selected} onSelect={id=>{setInput(collectionScenarios[id as "standard"|"priority"]);setSelected(id as "standard"|"priority");demo.reset();}} options={[{id:"standard",label:spanish?"Contacto estándar":"Standard contact",description:spanish?"Antes del límite de prioridad.":"Before the priority boundary."},{id:"priority",label:spanish?"Cuenta prioritaria":"Priority account",description:spanish?"Después del límite de política.":"Past the policy boundary."}]}/><label>{spanish?"Días de atraso":"Days past due"}<input className="mt-2 w-full border p-2" type="number" value={input.daysPastDue} onChange={e=>change({...input,daysPastDue:Number(e.target.value)})}/></label><label className="mt-4 block">{spanish?"Importe (centavos enteros)":"Amount (integer cents)"}<input className="mt-2 w-full border p-2" type="number" value={input.amountCents} onChange={e=>change({...input,amountCents:Number(e.target.value)})}/></label><label className="mt-4 block">{spanish?"Segmento":"Segment"}<select className="mt-2 w-full border" value={input.segment} onChange={e=>change({...input,segment:e.target.value as ExperienceInput["segment"]})}><option value="standard">{spanish?"Estándar":"Standard"}</option><option value="sensitive">{spanish?"Sensible":"Sensitive"}</option></select></label><label className="mt-4 block">{spanish?"Política":"Policy"}<select className="mt-2 w-full border" value={input.policy} onChange={e=>change({...input,policy:e.target.value as ExperienceInput["policy"]})}><option value="balanced">{spanish?"Equilibrada":"Balanced"}</option><option value="early">{spanish?"Contacto temprano":"Early contact"}</option></select></label>{demo.error&&<p className="mt-3 text-danger" role="alert">{errorCopy(demo.error,spanish)}</p>}<button className="mt-6 w-full rounded bg-accent py-2 text-white" onClick={()=>demo.execute(input)}>{demo.running?(spanish?"Enrutando":"Routing"):c.run}</button><div className="mt-3 flex gap-2"><button className="rounded border px-3 py-1" onClick={demo.cancel}>{spanish?"Cancelar":"Cancel"}</button><button className="rounded border px-3 py-1" onClick={reset}>{spanish?"Restaurar":"Reset"}</button></div></section><TracePlayer trace={demo.trace} locale={lang} executionMs={demo.run?.executionMs} translate={key=>key==="segment"?(spanish?"Segmento evaluado":"Segment evaluated"):(spanish?"Contacto previsualizado":"Contact previewed")} renderStage={frame=>{const result=frame.complete?(demo.run?.result??null):null;return <StoryStage locale={lang} title={spanish?"Línea de antigüedad":"Aging timeline"} caption={spanish?"El marcador del caso cruza el límite de política antes de revelar cola y mensaje.":"The case marker crosses the policy boundary before queue and message are revealed."} step={frame.visible} total={frame.total}><Visualization input={input} visible={frame.visible} result={result} lang={lang}/>{result&&<div className="mt-5"><OutcomeBlock title={result.priority==="high"?(spanish?"Cola prioritaria":"Priority queue"):(spanish?"Cola estándar":"Standard queue")} explanation={spanish?"La política local determina la prioridad y muestra un mensaje que no se envía.":"Local policy determines priority and previews a message that is not sent."} tone={result.priority==="high"?"warning":"success"}/></div>}</StoryStage>;}}/></div></main>;}
+import { useState } from "react";
+import { TracePlayer } from "@/design-system/demo/trace-player";
+import { MissionPrompt, MissionComparison } from "@/design-system/demo/mission-lab";
+import { useDemoRun } from "@/design-system/demo/use-demo-run";
+import { StoryHero, StorySection, AnalogyBlock, WhyIBuiltIt, FitGuide, ProvesBlock, EngineerNotes } from "@/design-system/demo/project-story";
+import { LanguageSwitch } from "@/design-system/components/language-switch";
+import { traceCopy } from "@/lib/experience/trace-copy";
+import { runMission } from "@/lib/experience/mission";
+import { CobranzasStoryScene } from "@/lib/experience/story-scene";
+import { COMPLETE_FRAME } from "@/lib/experience/scene-state";
+import { STORY } from "@/lib/experience/story";
+
+const REPO = "https://github.com/mdeasis27/agente-cobranzas";
+const DEFAULT_DAYS = 50;
+
+export function Experience({ lang: locale }: { lang: "en" | "es" }) {
+  const t = STORY[locale];
+  const [days, setDays] = useState(DEFAULT_DAYS);
+  const [prediction, setPrediction] = useState<string | null>(null);
+  const demo = useDemoRun(runMission);
+  const run = demo.run;
+  const result = run?.result;
+  // Section 03 waits for the tape to finish; keyed to the trace so every new run resets it.
+  const [playedTrace, setPlayedTrace] = useState<typeof demo.trace | null>(null);
+  const played = demo.trace.length === 0 || playedTrace === demo.trace;
+  const clear = () => { setPrediction(null); demo.reset(); };
+  const reset = () => { setDays(DEFAULT_DAYS); clear(); };
+  const scene = (frame: typeof COMPLETE_FRAME) => result ? <CobranzasStoryScene frame={frame} result={result} locale={locale} /> : null;
+
+  return <main className="mx-auto max-w-5xl px-5 py-8 text-foreground sm:py-12">
+    <div className="mb-6 flex items-center justify-between gap-4">
+      <a className="font-mono text-xs text-muted-foreground underline-offset-4 hover:underline" href={`/${locale}`}>← {t.name}</a>
+      <LanguageSwitch locale={locale} />
+    </div>
+    <StoryHero name={t.name} oneLiner={t.oneLiner} chips={t.chips} />
+
+    <StorySection index={1} heading={t.analogy.heading}>
+      <AnalogyBlock paragraphs={t.analogy.paragraphs} dictionaryLabel={t.analogy.dictionaryLabel} dictionary={t.analogy.dictionary} />
+    </StorySection>
+
+    <WhyIBuiltIt title={t.why.title} text={t.why.text} />
+
+    <StorySection index={2} heading={t.tryIt.heading} lead={t.tryIt.lead}>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
+        <section className="min-w-0 rounded-xl border border-border bg-surface p-5">
+          <MissionPrompt locale={locale} question={t.tryIt.question(days)} prediction={prediction} onPredict={setPrediction} locked={Boolean(run) || demo.running} options={[{ id: "yes", label: t.tryIt.yes }, { id: "no", label: t.tryIt.no }]} />
+          <label className="mt-5 block text-sm">
+            <span className="flex justify-between"><span>{t.tryIt.daysLabel}</span><span className="font-mono">{t.tryIt.daysValue(days)}</span></span>
+            <input aria-label={t.tryIt.daysLabel} aria-valuetext={t.tryIt.daysValue(days)} className="mt-2 w-full" type="range" min="5" max="60" step="5" value={days} onChange={e => { setDays(Number(e.target.value)); clear(); }} />
+            <span className="mt-1 block text-xs text-muted-foreground">{t.tryIt.daysHint}</span>
+          </label>
+          <p className="mt-4 text-xs leading-5 text-muted-foreground">{t.tryIt.note}</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <button type="button" data-run-experiment disabled={demo.running} className="min-w-0 flex-1 rounded-lg bg-accent px-4 py-3 text-sm font-medium text-white disabled:opacity-60" onClick={() => demo.execute({ thresholdDays: days })}>{t.tryIt.simulate}</button>
+            <button type="button" className="rounded-lg border border-border px-3 py-3 text-sm" onClick={demo.cancel}>{t.tryIt.cancel}</button>
+            <button type="button" className="rounded-lg border border-border px-3 py-3 text-sm" onClick={reset}>{t.tryIt.reset}</button>
+          </div>
+          {demo.error ? <p role="alert" className="mt-3 text-sm text-danger">{t.tryIt.error}</p> : null}
+        </section>
+        <section className="min-w-0">
+          {run && result
+            ? (demo.trace.length === 0 ? scene(COMPLETE_FRAME) : <TracePlayer collapsible autoPlay headingLevel="h3" onComplete={() => setPlayedTrace(demo.trace)} translate={key => traceCopy(locale, key)} trace={demo.trace} locale={locale} executionMs={run.executionMs} renderStage={scene} />)
+            : <p className="rounded-xl border border-dashed border-border p-8 text-sm text-muted-foreground">{t.tryIt.idle}</p>}
+        </section>
+      </div>
+    </StorySection>
+
+    <StorySection index={3} heading={t.compare.heading} lead={t.compare.lead}>
+      {result && played ? <MissionComparison locale={locale} prediction={prediction} actual={result.counts.atRisk > 0 ? "yes" : "no"} actualLabel={t.scene.atRiskOf(result.counts.atRisk)} explanation={t.compare.sentence(result.comparison.mine, result.comparison.noDayRule)} sides={[
+        { label: t.compare.mine, value: `${result.comparison.mine}`, detail: t.compare.atRisk, positive: result.comparison.mine < result.comparison.noDayRule },
+        { label: t.compare.noDayRule, value: `${result.comparison.noDayRule}`, detail: t.compare.atRisk },
+      ]} /> : null}
+    </StorySection>
+
+    <StorySection index={4} heading={t.fit.heading}>
+      <FitGuide worthLabel={t.fit.worthLabel} worth={t.fit.worth} notLabel={t.fit.notLabel} not={t.fit.not} />
+    </StorySection>
+
+    <StorySection index={5} heading={t.proves.heading}>
+      <ProvesBlock text={t.proves.text} />
+    </StorySection>
+
+    <EngineerNotes summary={t.engineers.summary}>
+      <ul className="list-disc space-y-2 pl-5">{t.engineers.points.map(p => <li key={p}>{p}</li>)}</ul>
+      <a className="mt-4 inline-block text-accent underline underline-offset-4" href={REPO}>{t.engineers.repoLabel} →</a>
+    </EngineerNotes>
+  </main>;
+}
