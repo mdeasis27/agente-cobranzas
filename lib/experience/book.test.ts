@@ -29,3 +29,9 @@ test("sweep: both bet answers are reachable, and the default (50) leaves an acco
   assert.deepEqual([...answers].sort(), [false, true]);
   assert.equal(runBook(50).counts.atRisk > 0, true);
 });
+
+test("each routed account carries its balance in integer cents for the scene", () => {
+  const items = runBook(50).items;
+  assert.equal(items.find(i => i.id === "account-3")?.amountCents, 150_000);
+  for (const i of items) assert.ok(Number.isInteger(i.amountCents));
+});
