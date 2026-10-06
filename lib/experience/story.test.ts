@@ -1,0 +1,2 @@
+import assert from "node:assert/strict"; import test from "node:test"; import { decideContact } from "./contact-policy"; import { collectionScenarios, isCollectionScenario } from "./story";
+test("collection presets cross the priority boundary",()=>{assert.equal(decideContact(collectionScenarios.standard).priority,"low");assert.equal(decideContact(collectionScenarios.priority).priority,"high");assert.equal(isCollectionScenario({...collectionScenarios.priority,daysPastDue:20},"priority"),false);});

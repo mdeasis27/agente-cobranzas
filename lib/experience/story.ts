@@ -1,0 +1,3 @@
+import type { ExperienceInput } from "./types";
+export const collectionScenarios: Record<"standard" | "priority", ExperienceInput> = { standard: { daysPastDue: 10, amountCents: 25000, segment: "standard", policy: "balanced" }, priority: { daysPastDue: 35, amountCents: 25000, segment: "standard", policy: "balanced" } };
+export function isCollectionScenario(input: ExperienceInput, id: keyof typeof collectionScenarios) { const scenario = collectionScenarios[id]; return input.daysPastDue === scenario.daysPastDue && input.amountCents === scenario.amountCents && input.segment === scenario.segment && input.policy === scenario.policy; }

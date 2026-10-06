@@ -1,0 +1,51 @@
+{
+  "repository": "agente-cobranzas",
+  "scope": "Real React component with controlled locale; Next routes not tested.",
+  "checks": [
+    {
+      "locale": "en",
+      "scenarios": [
+        {
+          "preset": "Standard contact\nBefore the priority boundary.",
+          "outcome": "Standard queue\n\nLocal policy determines priority and previews a message that is not sent."
+        },
+        {
+          "preset": "Priority account\nPast the policy boundary.",
+          "outcome": "Priority queue\n\nLocal policy determines priority and previews a message that is not sent."
+        }
+      ],
+      "mobileNoOverflow": true,
+      "reducedMotion": true,
+      "keyboard": true,
+      "noRequests": true,
+      "sceneChangesWithScenario": true,
+      "editingClearsPresetAndTrace": true,
+      "resetRestoresFirstPreset": true,
+      "cancelControlPresent": true,
+      "presetRestoresAllInputs": true
+    },
+    {
+      "locale": "es",
+      "scenarios": [
+        {
+          "preset": "Contacto estándar\nAntes del límite de prioridad.",
+          "outcome": "Cola estándar\n\nLa política local determina la prioridad y muestra un mensaje que no se envía."
+        },
+        {
+          "preset": "Cuenta prioritaria\nDespués del límite de política.",
+          "outcome": "Cola prioritaria\n\nLa política local determina la prioridad y muestra un mensaje que no se envía."
+        }
+      ],
+      "mobileNoOverflow": true,
+      "reducedMotion": true,
+      "keyboard": true,
+      "noRequests": true,
+      "sceneChangesWithScenario": true,
+      "editingClearsPresetAndTrace": true,
+      "resetRestoresFirstPreset": true,
+      "cancelControlPresent": true,
+      "presetRestoresAllInputs": true
+    }
+  ],
+  "errors": []
+}

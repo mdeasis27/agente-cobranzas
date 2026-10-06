@@ -3,8 +3,8 @@
 ## Stack
 - **N8N** (self-hosted o N8N Cloud) — orquestación del workflow
 - **Google Sheets** — core bancario simulado (clientes, préstamos, estrategia)
-- **OpenAI GPT-4o** — generación de mensajes personalizados
-- **WhatsApp Business API** (Truora o Twilio) — canal de contacto
+- **LLM API GPT-4o** — generación de mensajes personalizados
+- **WhatsApp Business API** (Identity verification API o Twilio) — canal de contacto
 - **Gmail** — canal alternativo de contacto
 
 ## Pasos para instalar
@@ -12,7 +12,7 @@
 1. Importar `workflows/main-workflow.json` en N8N
 2. Configurar credenciales en N8N:
    - Google Sheets OAuth
-   - OpenAI API Key
+   - LLM API API Key
    - WhatsApp / Gmail
 3. Crear el Google Sheets usando la plantilla en `sheets/template.md`
 4. Ajustar la hoja `Contact_Strategy` con las reglas del negocio
@@ -22,7 +22,7 @@
 ## Variables requeridas en N8N
 ```
 OPENAI_API_KEY=
-WHATSAPP_API_KEY=   (Truora o Twilio)
+WHATSAPP_API_KEY=   (Identity verification API o Twilio)
 GOOGLE_SHEET_ID=    (ID del sheet de producción)
 N8N_WEBHOOK_URL=    (URL del webhook de prueba)
 ```
@@ -38,7 +38,7 @@ Merge (por customer_id)
   ↓
 Filter (days_overdue > 0)
   ↓
-OpenAI Chat → mensaje personalizado por cliente
+LLM API Chat → mensaje personalizado por cliente
   ↓
 Switch → WhatsApp o Email
   ↓
