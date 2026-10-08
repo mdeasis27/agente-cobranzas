@@ -428,7 +428,7 @@ CRON_SECRET=           # openssl rand -base64 32`}</code>
           Demo interactiva — el workflow real corre en Next.js + Scheduled jobs · Construido
           por{" "}
           <a
-            href="https://manueldeasis.com"
+            href="https://portafolio-mdea.vercel.app"
             className="text-primary hover:underline"
           >
             Manuel De Asís
